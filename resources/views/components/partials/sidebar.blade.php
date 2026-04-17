@@ -70,6 +70,19 @@
                     Manajemen Dokter
                 </a>
 
+                {{-- ====== MENU MANAGEMEN PASIEN ====== --}}
+                <a href="{{ route('pasien.index') }}"
+                    class="{{ $baseLink }} {{ request()->routeIs('pasien.*') ? $active : $inactive }}">
+                    <i class="fas fa-user-injured w-4 text-center"></i>
+                    Manajemen Pasien
+                </a>
+
+                {{-- ====== MENU MANAGEMEN OBAT ====== --}}
+                <a href="{{ route('obat.index') }}"
+                    class="{{ $baseLink }} {{ request()->routeIs('obat.*') ? $active : $inactive }}">
+                    <i class="fas fa-pills w-4 text-center"></i>
+                    Manajemen Obat
+                </a>
             </div>
         @endif
 

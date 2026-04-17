@@ -4,6 +4,9 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\PoliController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\PoliController as AdminPoliController;
+use App\Http\Controllers\Admin\DokterController;
+use App\Http\Controllers\Admin\PasienController;
+use App\Http\Controllers\Admin\ObatController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -34,13 +37,6 @@ Route::middleware(['auth', 'role:pasien'])->prefix('pasien')->group(function () 
 });
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
-    Route::resource('polis', PoliController::class);
-});
-
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
 
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
@@ -48,5 +44,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
 
     Route::resource('polis', AdminPoliController::class);
     Route::resource('dokter', DokterController::class);
-
+    Route::resource('pasien', PasienController::class);
+    Route::resource('obat', ObatController::class);
 });
