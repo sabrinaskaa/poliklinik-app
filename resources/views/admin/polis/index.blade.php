@@ -81,9 +81,11 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="3" class="text-center py-14 text-slate-400">
-                                    <i class="fas fa-inbox text-3xl mb-3 block"></i>
-                                    Belum ada data poli
+                                <td colspan="3" class="py-14 text-slate-400">
+                                    <div class="flex flex-col items-center justify-center">
+                                        <i class="fas fa-inbox text-3xl mb-3"></i>
+                                        Belum ada data poli
+                                    </div>
                                 </td>
                             </tr>
                         @endforelse

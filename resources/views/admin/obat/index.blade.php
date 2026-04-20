@@ -89,9 +89,11 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="text-center py-12 text-slate-400">
-                                    <i class="fas fa-inbox text-3xl mb-3 block"></i>
-                                    Belum ada data obat
+                                <td colspan="4" class="py-12 text-slate-400">
+                                    <div class="flex flex-col items-center justify-center">
+                                        <i class="fas fa-inbox text-3xl mb-3"></i>
+                                        Belum ada data obat
+                                    </div>
                                 </td>
                             </tr>
                         @endforelse

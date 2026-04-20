@@ -119,6 +119,13 @@
                     Dashboard Dokter
                 </a>
 
+                {{-- ====== MENU MANAGEMEN JADWAL PERIKSA ====== --}}
+                <a href="{{ route('jadwal-periksa.index') }}"
+                    class="{{ $baseLink }} {{ request()->routeIs('jadwal-periksa.*') ? $active : $inactive }}">
+                    <i class="fas fa-calendar w-4 text-center"></i>
+                    Jadwal Periksa
+                </a>
+
             </div>
         @endif
 
