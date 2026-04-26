@@ -101,6 +101,11 @@
                     Dashboard Pasien
                 </a>
 
+                <a href="{{ route('pasien.daftar') }}"
+                    class="{{ $baseLink }} {{ request()->routeIs('pasien.daftar') ? $active : $inactive }}">
+                    <i class="fas fa-house-medical w-4 text-center"></i>
+                    Pendaftaran Periksa
+                </a>
             </div>
         @endif
 
@@ -122,8 +127,15 @@
                 {{-- ====== MENU MANAGEMEN JADWAL PERIKSA ====== --}}
                 <a href="{{ route('jadwal-periksa.index') }}"
                     class="{{ $baseLink }} {{ request()->routeIs('jadwal-periksa.*') ? $active : $inactive }}">
-                    <i class="fas fa-calendar w-4 text-center"></i>
+                    <i class="fas fa-stethoscope w-4 text-center"></i>
                     Jadwal Periksa
+                </a>
+
+                {{-- ====== MENU MANAGEMEN PERIKSA PASIEN ====== --}}
+                <a href="{{ route('dokter.periksa-pasien.index') }}"
+                    class="{{ $baseLink }} {{ request()->routeIs('dokter.periksa-pasien.*') ? $active : $inactive }}">
+                    <i class="fas fa-user-injured w-4 text-center"></i>
+                    Periksa Pasien
                 </a>
 
             </div>
