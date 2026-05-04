@@ -9,84 +9,53 @@ use App\Models\Obat;
 use App\Models\Periksa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class PeriksaPasienController extends Controller
 {
     public function index()
     {
-        $list = DaftarPoli::with(['pasien', 'jadwalPeriksa'])
-            ->whereHas('jadwalPeriksa', function ($q) {
-                $q->where('id_dokter', Auth::id());
+        $dokterId = Auth::id();
+
+        $daftarPasien = DaftarPoli::with(['pasien', 'jadwalPeriksa', 'periksas'])
+            ->whereHas('jadwalPeriksa', function ($query) use ($dokterId) {
+                $query->where('id_dokter', $dokterId);
             })
-            ->whereDoesntHave('periksas')
-            ->orderBy('created_at')
+            ->orderBy('no_antrian')
             ->get();
 
-        return view('dokter.periksa-pasien.index', compact('list'));
+        return view('dokter.periksa-pasien.index', compact('daftarPasien'));
     }
 
-    public function edit($id)
+    public function create($id)
     {
-        $daftarPoli = DaftarPoli::with(['pasien', 'jadwalPeriksa'])
-            ->whereHas('jadwalPeriksa', function ($q) {
-                $q->where('id_dokter', Auth::id());
-            })
-            ->findOrFail($id);
-
-        $obats = Obat::orderBy('nama_obat')->get();
-
-        return view('dokter.periksa-pasien.edit', compact('daftarPoli', 'obats'));
+        $obats = Obat::all();
+        return view('dokter.periksa-pasien.create', compact('obats', 'id'));
     }
 
-    public function update(Request $request, $id)
+    public function store(Request $request)
     {
         $request->validate([
-            'obat_ids'   => 'required|array|min:1',
-            'obat_ids.*' => 'exists:obat,id',
-            'catatan'    => 'nullable|string',
+            'obat_json' => 'required',
+            'catatan' => 'nullable|string',
+            'biaya_periksa' => 'required|integer',
         ]);
 
-        $daftarPoli = DaftarPoli::whereHas('jadwalPeriksa', function ($q) {
-                $q->where('id_dokter', Auth::id());
-            })
-            ->findOrFail($id);
+        $obatIds = json_decode($request->obat_json, true);
 
-        DB::beginTransaction();
+        $periksa = Periksa::create([
+            'id_daftar_poli' => $request->id_daftar_poli,
+            'tgl_periksa' => now(),
+            'catatan' => $request->catatan,
+            'biaya_periksa' => $request->biaya_periksa + 150000,
+        ]);
 
-        try {
-            $obats = Obat::whereIn('id', $request->obat_ids)->get();
-            $totalObat = $obats->sum('harga');
-            $biayaJasa = 150000; // sesuaikan kebutuhan
-            $totalBiaya = $biayaJasa + $totalObat;
-
-            $periksa = Periksa::create([
-                'id_daftar_poli' => $daftarPoli->id,
-                'tgl_periksa'    => now(),
-                'catatan'        => $request->catatan,
-                'biaya_periksa'  => $totalBiaya,
+        foreach ($obatIds as $idObat) {
+            DetailPeriksa::create([
+                'id_periksa' => $periksa->id,
+                'id_obat' => $idObat,
             ]);
-
-            foreach ($obats as $obat) {
-                DetailPeriksa::create([
-                    'id_periksa' => $periksa->id,
-                    'id_obat'    => $obat->id,
-                ]);
-            }
-
-            DB::commit();
-
-            return redirect()
-                ->route('dokter.periksa-pasien.index')
-                ->with('message', 'Data periksa berhasil disimpan.')
-                ->with('type', 'success');
-        } catch (\Throwable $th) {
-            DB::rollBack();
-
-            return back()
-                ->withInput()
-                ->with('message', 'Gagal menyimpan data periksa.')
-                ->with('type', 'error');
         }
+
+        return redirect()->route('periksa-pasien.index')->with('success', 'Data periksa berhasil disimpan.');
     }
 }

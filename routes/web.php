@@ -43,11 +43,12 @@ Route::middleware(['auth', 'role:dokter'])
 
         Route::resource('jadwal-periksa', JadwalPeriksaController::class);
 
-        Route::get('/periksa-pasien', [PeriksaPasienController::class, 'index'])->name('dokter.periksa-pasien.index');
-        Route::get('/periksa-pasien/{id}', [PeriksaPasienController::class, 'edit'])->name('dokter.periksa-pasien.edit');
-        Route::put('/periksa-pasien/{id}', [PeriksaPasienController::class, 'update'])->name('dokter.periksa-pasien.update');
-        Route::get('/riwayat-pasien', [RiwayatPasienController::class, 'index'])->name('dokter.riwayat-pasien.index');
-        Route::get('/riwayat-pasien/{id}', [RiwayatPasienController::class, 'show'])->name('dokter.riwayat-pasien.show');
+        Route::get('/periksa-pasien', [PeriksaPasienController::class, 'index'])->name('periksa-pasien.index');
+        Route::post('/periksa-pasien', [PeriksaPasienController::class, 'store'])->name('periksa-pasien.store');
+        Route::get('/periksa-pasien/{id}', [PeriksaPasienController::class, 'create'])->name('periksa-pasien.create');
+
+        Route::get('/riwayat-pasien', [RiwayatPasienController::class, 'index'])->name('riwayat-pasien.index');
+        Route::get('/riwayat-pasien/{id}', [RiwayatPasienController::class, 'show'])->name('riwayat-pasien.show');
     });
 
 Route::middleware(['auth', 'role:pasien'])
