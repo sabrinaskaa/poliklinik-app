@@ -33,22 +33,22 @@
             <div class="main-scroll">
 
                 @if (session('success'))
-                    <div class="alert alert-success mb-4 rounded-xl shadow-sm">
+                    <div class="alert alert-success mb-4 rounded-xl shadow-sm flash-alert">
                         <i class="fas fa-check-circle"></i>
                         <span>{{ session('success') }}</span>
                     </div>
                 @endif
 
                 @if (session('error'))
-                    <div class="alert alert-error mb-4 rounded-xl shadow-sm">
+                    <div class="alert alert-error mb-4 rounded-xl shadow-sm flash-alert">
                         <i class="fas fa-circle-xmark"></i>
                         <span>{{ session('error') }}</span>
                     </div>
                 @endif
 
-                @if (session('message'))
+                @if (session('message') && !request()->routeIs('pasien.daftar'))
                     <div
-                        class="alert {{ session('type') === 'success' ? 'alert-success' : 'alert-info' }} mb-4 rounded-xl shadow-sm">
+                        class="alert {{ session('type') === 'success' ? 'alert-success' : 'alert-info' }} mb-4 rounded-xl shadow-sm flash-alert">
                         <i class="fas {{ session('type') === 'success' ? 'fa-check-circle' : 'fa-circle-info' }}"></i>
                         <span>{{ session('message') }}</span>
                     </div>
@@ -88,6 +88,20 @@
                 icon.className = 'fas fa-expand'
             }
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.flash-alert')
+
+            alerts.forEach(function(alert) {
+                setTimeout(function() {
+                    alert.classList.add('opacity-0', 'translate-y-[-8px]')
+
+                    setTimeout(function() {
+                        alert.remove()
+                    }, 300)
+                }, 3000)
+            })
+        })
     </script>
 
     @stack('scripts')

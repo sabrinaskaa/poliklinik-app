@@ -9,11 +9,10 @@
                         🏥 Pendaftaran Poli
                     </h2>
 
-                    {{-- Toast Success --}}
                     @if (session('message'))
-                        <div id="toastSuccess" class="toast toast-top toast-end z-50">
-                            <div class="alert alert-success shadow-lg">
-                                <span> {{ session('message') }}</span>
+                        <div class="toast toast-top toast-end z-50">
+                            <div class="alert alert-success rounded-xl shadow-lg flash-alert">
+                                <span>{{ session('message') }}</span>
                             </div>
                         </div>
                     @endif
