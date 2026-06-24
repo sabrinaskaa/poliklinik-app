@@ -29,6 +29,28 @@ class User extends Authenticatable
         'password',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($user) {
+            if ($user->role === 'pasien' && empty($user->no_rm)) {
+                $currentMonth = date('Ym');
+                $lastPasien = self::where('role', 'pasien')
+                    ->where('no_rm', 'like', $currentMonth . '-%')
+                    ->orderBy('id', 'desc')
+                    ->first();
+
+                $sequence = 1;
+                if ($lastPasien && preg_match('/-(\d+)$/', $lastPasien->no_rm, $matches)) {
+                    $sequence = (int) $matches[1] + 1;
+                }
+
+                $user->no_rm = $currentMonth . '-' . str_pad($sequence, 3, '0', STR_PAD_LEFT);
+            }
+        });
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

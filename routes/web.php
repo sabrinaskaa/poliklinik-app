@@ -6,10 +6,13 @@ use App\Http\Controllers\Admin\PoliController as AdminPoliController;
 use App\Http\Controllers\Admin\DokterController;
 use App\Http\Controllers\Admin\PasienController;
 use App\Http\Controllers\Admin\ObatController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Dokter\JadwalPeriksaController;
 use App\Http\Controllers\Pasien\PoliController as PasienPoliController;
 use App\Http\Controllers\Dokter\PeriksaPasienController;
 use App\Http\Controllers\Dokter\RiwayatPasienController;
+use App\Http\Controllers\Dokter\DashboardController as DokterDashboardController;
+use App\Http\Controllers\Pasien\DashboardController as PasienDashboardController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -24,9 +27,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware(['auth', 'role:admin'])
     ->prefix('admin')
     ->group(function () {
-        Route::get('/dashboard', function () {
-            return view('admin.dashboard');
-        })->name('admin.dashboard');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
         Route::resource('polis', AdminPoliController::class);
         Route::resource('dokter', DokterController::class);
@@ -37,9 +38,7 @@ Route::middleware(['auth', 'role:admin'])
 Route::middleware(['auth', 'role:dokter'])
     ->prefix('dokter')
     ->group(function () {
-        Route::get('/dashboard', function () {
-            return view('dokter.dashboard');
-        })->name('dokter.dashboard');
+        Route::get('/dashboard', [DokterDashboardController::class, 'index'])->name('dokter.dashboard');
 
         Route::resource('jadwal-periksa', JadwalPeriksaController::class);
 
@@ -54,9 +53,7 @@ Route::middleware(['auth', 'role:dokter'])
 Route::middleware(['auth', 'role:pasien'])
     ->prefix('pasien')
     ->group(function () {
-        Route::get('/dashboard', function () {
-            return view('pasien.dashboard');
-        })->name('pasien.dashboard');
+        Route::get('/dashboard', [PasienDashboardController::class, 'index'])->name('pasien.dashboard');
 
         Route::get('/daftar', [PasienPoliController::class, 'get'])->name('pasien.daftar');
         Route::post('/daftar', [PasienPoliController::class, 'submit'])->name('pasien.daftar.submit');
