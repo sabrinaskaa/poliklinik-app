@@ -27,20 +27,54 @@
                         <span class="text-sm font-semibold text-gray-700">Pilih Obat <span
                                 class="text-red-500">*</span></span>
                     </label>
+                    @php
+                        $adaStokMenipis = $obats->contains(fn($o) => $o->stokMenipis());
+                    @endphp
                     <select id="select-obat" class="select select-bordered w-full rounded-lg border-2 px-4">
                         <option value="">-- Pilih Obat --</option>
                         @foreach ($obats as $obat)
-                            <option value="{{ $obat->id }}" data-nama="{{ $obat->nama_obat }}"
-                                data-harga="{{ $obat->harga }}">
-                                {{ $obat->nama_obat }} - Rp{{ number_format($obat->harga) }}
-                            </option>
+                            @if($obat->stokHabis())
+                                {{-- Obat stok habis: disabled --}}
+                                <option value="{{ $obat->id }}"
+                                    data-nama="{{ $obat->nama_obat }}"
+                                    data-harga="{{ $obat->harga }}"
+                                    data-stok="{{ $obat->stok }}"
+                                    data-habis="1"
+                                    disabled>
+                                    {{ $obat->nama_obat }} — Rp{{ number_format($obat->harga) }} [HABIS]
+                                </option>
+                            @elseif($obat->stokMenipis())
+                                {{-- Obat stok menipis: bisa dipilih, ada keterangan --}}
+                                <option value="{{ $obat->id }}"
+                                    data-nama="{{ $obat->nama_obat }}"
+                                    data-harga="{{ $obat->harga }}"
+                                    data-stok="{{ $obat->stok }}"
+                                    data-menipis="1">
+                                    {{ $obat->nama_obat }} — Rp{{ number_format($obat->harga) }} [Sisa {{ $obat->stok }}]
+                                </option>
+                            @else
+                                <option value="{{ $obat->id }}"
+                                    data-nama="{{ $obat->nama_obat }}"
+                                    data-harga="{{ $obat->harga }}"
+                                    data-stok="{{ $obat->stok }}">
+                                    {{ $obat->nama_obat }} — Rp{{ number_format($obat->harga) }} (Stok: {{ $obat->stok }})
+                                </option>
+                            @endif
                         @endforeach
                     </select>
+
+                    {{-- Stok menipis hint --}}
+                    @if($adaStokMenipis)
+                        <p class="text-xs text-amber-600 mt-1 flex items-center gap-1">
+                            <i class="fas fa-triangle-exclamation"></i>
+                            Obat bertanda <strong>[Sisa N]</strong> memiliki stok menipis.
+                        </p>
+                    @endif
                 </div>
 
                 {{-- Obat Terpilih --}}
                 <div class="form-control mb-5">
-                    <label class="label pb-1 ">
+                    <label class="label pb-1">
                         <span class="text-sm font-semibold text-gray-700">Obat Terpilih</span>
                     </label>
 
@@ -99,17 +133,18 @@
 
         selectObat.addEventListener('change', () => {
             const selectedOption = selectObat.options[selectObat.selectedIndex];
-            const id = selectedOption.value;
-            const nama = selectedOption.dataset.nama;
-            const harga = parseInt(selectedOption.dataset.harga || 0);
+            const id       = selectedOption.value;
+            const nama     = selectedOption.dataset.nama;
+            const harga    = parseInt(selectedOption.dataset.harga || 0);
+            const stok     = parseInt(selectedOption.dataset.stok || 0);
+            const menipis  = selectedOption.dataset.menipis === '1';
 
-            if (!id || daftarObat.some(o => o.id == id)) return;
+            if (!id || daftarObat.some(o => o.id == id)) {
+                selectObat.selectedIndex = 0;
+                return;
+            }
 
-            daftarObat.push({
-                id,
-                nama,
-                harga
-            });
+            daftarObat.push({ id, nama, harga, stok, menipis });
             renderObat();
             selectObat.selectedIndex = 0;
         });
@@ -124,11 +159,21 @@
                 const item = document.createElement('li');
                 item.className =
                     'flex items-center justify-between px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700';
+
+                const stokBadge = obat.menipis
+                    ? `<span class="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-600 ml-2">
+                            <i class="fas fa-triangle-exclamation text-xs"></i> Stok Menipis (${obat.stok})
+                       </span>`
+                    : '';
+
                 item.innerHTML = `
-                    <span>${obat.nama} — <span class="font-semibold">Rp ${obat.harga.toLocaleString()}</span></span>
+                    <span class="flex items-center flex-wrap gap-1">
+                        ${obat.nama} — <span class="font-semibold">Rp ${obat.harga.toLocaleString()}</span>
+                        ${stokBadge}
+                    </span>
                     <button type="button"
                         onclick="hapusObat(${index})"
-                        class="btn btn-sm bg-red-500 hover:bg-red-600 text-white border-none rounded-lg px-3">
+                        class="btn btn-sm bg-red-500 hover:bg-red-600 text-white border-none rounded-lg px-3 ml-2 flex-shrink-0">
                         <i class="fas fa-trash"></i>
                     </button>
                 `;

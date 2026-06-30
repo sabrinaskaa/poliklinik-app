@@ -48,8 +48,8 @@
 
                 @if (session('message') && !request()->routeIs('pasien.daftar'))
                     <div
-                        class="alert {{ session('type') === 'success' ? 'alert-success' : 'alert-info' }} mb-4 rounded-xl shadow-sm flash-alert">
-                        <i class="fas {{ session('type') === 'success' ? 'fa-check-circle' : 'fa-circle-info' }}"></i>
+                        class="alert {{ session('type') === 'success' ? 'alert-success' : (session('type') === 'error' ? 'alert-error' : 'alert-info') }} mb-4 rounded-xl shadow-sm flash-alert">
+                        <i class="fas {{ session('type') === 'success' ? 'fa-check-circle' : (session('type') === 'error' ? 'fa-circle-xmark' : 'fa-circle-info') }}"></i>
                         <span>{{ session('message') }}</span>
                     </div>
                 @endif

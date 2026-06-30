@@ -1,6 +1,5 @@
 <x-layouts.app title="Edit Obat">
 
-
     {{-- Header --}}
     <div class="flex items-center gap-3 mb-6">
         <a href="{{ route('obat.index') }}"
@@ -10,26 +9,34 @@
             <i class="fas fa-arrow-left text-sm"></i>
         </a>
 
-
         <h2 class="text-2xl font-bold text-slate-800">
             Edit Obat
         </h2>
     </div>
 
+    {{-- Stok Info Banner --}}
+    @if($obat->stokHabis())
+        <div class="alert alert-error mb-4 rounded-xl shadow-sm">
+            <i class="fas fa-circle-xmark"></i>
+            <span>Stok obat ini sudah <strong>habis</strong>. Silakan tambah stok melalui tombol manajemen stok di halaman daftar obat.</span>
+        </div>
+    @elseif($obat->stokMenipis())
+        <div class="alert alert-warning mb-4 rounded-xl shadow-sm">
+            <i class="fas fa-triangle-exclamation"></i>
+            <span>Stok obat ini <strong>menipis</strong> ({{ $obat->stok }} unit tersisa).</span>
+        </div>
+    @endif
 
     {{-- Card --}}
     <div class="card bg-base-100 shadow-md rounded-2xl border border-slate-200">
         <div class="card-body p-8">
 
-
             <form action="{{ route('obat.update', $obat->id) }}" method="POST">
                 @csrf
                 @method('PUT')
 
-
-                {{-- Grid --}}
+                {{-- Grid Baris 1: Nama & Kemasan --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-
 
                     {{-- Nama Obat --}}
                     <div>
@@ -47,7 +54,6 @@
                         @enderror
                     </div>
 
-
                     {{-- Kemasan --}}
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-1">
@@ -63,36 +69,65 @@
                         @enderror
                     </div>
 
-
                 </div>
 
+                {{-- Grid Baris 2: Harga & Stok --}}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
 
-                {{-- Harga --}}
-                <div class="mb-8">
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">
-                        Harga <span class="text-red-500">*</span>
-                    </label>
-
-
-                    <div
-                        class="flex items-center border-2 rounded-lg p-2 px-4 py-2
-                                focus-within:border-primary">
-                        <span class="text-slate-500 text-sm font-semibold mr-2">
-                            Rp
-                        </span>
-                        <input type="number" name="harga" value="{{ old('harga', $obat->harga) }}" placeholder="0"
-                            min="0" step="1"
-                            class="w-full focus:outline-none
-                                      @error('harga') border-red-500 @enderror"
-                            required>
+                    {{-- Harga --}}
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">
+                            Harga <span class="text-red-500">*</span>
+                        </label>
+                        <div
+                            class="flex items-center border-2 rounded-lg p-2 px-4 py-2
+                                    focus-within:border-primary">
+                            <span class="text-slate-500 text-sm font-semibold mr-2">
+                                Rp
+                            </span>
+                            <input type="number" name="harga" value="{{ old('harga', $obat->harga) }}" placeholder="0"
+                                min="0" step="1"
+                                class="w-full focus:outline-none
+                                          @error('harga') border-red-500 @enderror"
+                                required>
+                        </div>
+                        @error('harga')
+                            <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
+                    {{-- Stok --}}
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">
+                            Stok <span class="text-red-500">*</span>
+                        </label>
+                        <div
+                            class="flex items-center border-2 rounded-lg p-2 px-4 py-2
+                                    focus-within:border-primary
+                                    {{ $obat->stokHabis() ? 'border-red-300 bg-red-50' : ($obat->stokMenipis() ? 'border-amber-300 bg-amber-50' : '') }}">
+                            <i class="fas fa-boxes-stacked text-slate-400 mr-3 text-sm"></i>
+                            <input type="number" name="stok" value="{{ old('stok', $obat->stok) }}" placeholder="0"
+                                min="0" step="1"
+                                class="w-full focus:outline-none bg-transparent
+                                          @error('stok') border-red-500 @enderror"
+                                required>
+                            <span class="text-slate-400 text-sm ml-2">unit</span>
+                        </div>
+                        @error('stok')
+                            <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                        @enderror
+                        @if($obat->stokHabis())
+                            <p class="text-xs text-red-500 mt-1 flex items-center gap-1">
+                                <i class="fas fa-circle-xmark"></i> Stok habis
+                            </p>
+                        @elseif($obat->stokMenipis())
+                            <p class="text-xs text-amber-500 mt-1 flex items-center gap-1">
+                                <i class="fas fa-triangle-exclamation"></i> Stok menipis
+                            </p>
+                        @endif
+                    </div>
 
-                    @error('harga')
-                        <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
-                    @enderror
                 </div>
-
 
                 {{-- Buttons --}}
                 <div class="flex gap-3">
@@ -102,7 +137,6 @@
                         <i class="fas fa-save mr-1"></i> Update
                     </button>
 
-
                     <a href="{{ route('obat.index') }}"
                         class="px-6 py-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 
                                text-slate-600 font-semibold text-sm transition">
@@ -110,12 +144,9 @@
                     </a>
                 </div>
 
-
             </form>
-
 
         </div>
     </div>
-
 
 </x-layouts.app>
