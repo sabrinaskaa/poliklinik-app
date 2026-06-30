@@ -219,4 +219,147 @@
 
     </div>
 
+    {{-- ===== STOK OBAT KRITIS ===== --}}
+    @if($obatHabis->isNotEmpty() || $obatMenipis->isNotEmpty())
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 mt-4">
+
+        {{-- Stok Habis --}}
+        <div class="card bg-base-100 shadow-sm border border-base-200 rounded-2xl">
+            <div class="card-body p-0">
+
+                {{-- Header --}}
+                <div class="flex items-center justify-between px-6 pt-5 pb-4 border-b border-base-200">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-red-50 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-circle-xmark text-red-500"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-700 text-base leading-tight">Stok Habis</h3>
+                            <p class="text-xs text-slate-400 mt-0.5">Segera lakukan pengisian stok</p>
+                        </div>
+                    </div>
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-red-100 text-red-600">
+                        {{ $obatHabis->count() }} obat
+                    </span>
+                </div>
+
+                {{-- List --}}
+                @if($obatHabis->isEmpty())
+                    <div class="flex flex-col items-center justify-center py-12 text-slate-400">
+                        <i class="fas fa-circle-check text-2xl text-emerald-400 mb-2"></i>
+                        <span class="text-sm">Semua stok tersedia</span>
+                    </div>
+                @else
+                    <div class="overflow-x-auto">
+                        <table class="table w-full">
+                            <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
+                                <tr>
+                                    <th class="px-6 py-3">Nama Obat</th>
+                                    <th class="px-6 py-3">Kemasan</th>
+                                    <th class="px-6 py-3 text-center">Stok</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($obatHabis as $obat)
+                                    <tr class="hover:bg-slate-50 transition border-b border-base-100 last:border-0">
+                                        <td class="px-6 py-4 font-semibold text-slate-800 text-sm">
+                                            {{ $obat->nama_obat }}
+                                        </td>
+                                        <td class="px-6 py-4 text-slate-500 text-sm">
+                                            {{ $obat->kemasan ?? '-' }}
+                                        </td>
+                                        <td class="px-6 py-4 text-center">
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold rounded-full bg-red-100 text-red-600">
+                                                <i class="fas fa-circle-xmark text-xs"></i>
+                                                Habis
+                                            </span>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="px-6 py-3 border-t border-base-200">
+                        <a href="{{ route('obat.index') }}"
+                            class="text-xs font-semibold text-red-500 hover:text-red-700 flex items-center gap-1 transition">
+                            Kelola stok obat
+                            <i class="fas fa-arrow-right text-xs"></i>
+                        </a>
+                    </div>
+                @endif
+
+            </div>
+        </div>
+
+        {{-- Stok Menipis --}}
+        <div class="card bg-base-100 shadow-sm border border-base-200 rounded-2xl">
+            <div class="card-body p-0">
+
+                {{-- Header --}}
+                <div class="flex items-center justify-between px-6 pt-5 pb-4 border-b border-base-200">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-amber-50 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-triangle-exclamation text-amber-500"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-700 text-base leading-tight">Stok Menipis</h3>
+                            <p class="text-xs text-slate-400 mt-0.5">Sisa kurang dari 10 unit</p>
+                        </div>
+                    </div>
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-600">
+                        {{ $obatMenipis->count() }} obat
+                    </span>
+                </div>
+
+                {{-- List --}}
+                @if($obatMenipis->isEmpty())
+                    <div class="flex flex-col items-center justify-center py-12 text-slate-400">
+                        <i class="fas fa-circle-check text-2xl text-emerald-400 mb-2"></i>
+                        <span class="text-sm">Tidak ada stok menipis</span>
+                    </div>
+                @else
+                    <div class="overflow-x-auto">
+                        <table class="table w-full">
+                            <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
+                                <tr>
+                                    <th class="px-6 py-3">Nama Obat</th>
+                                    <th class="px-6 py-3">Kemasan</th>
+                                    <th class="px-6 py-3 text-center">Sisa</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($obatMenipis as $obat)
+                                    <tr class="hover:bg-slate-50 transition border-b border-base-100 last:border-0">
+                                        <td class="px-6 py-4 font-semibold text-slate-800 text-sm">
+                                            {{ $obat->nama_obat }}
+                                        </td>
+                                        <td class="px-6 py-4 text-slate-500 text-sm">
+                                            {{ $obat->kemasan ?? '-' }}
+                                        </td>
+                                        <td class="px-6 py-4 text-center">
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold rounded-full bg-amber-100 text-amber-600">
+                                                <i class="fas fa-triangle-exclamation text-xs"></i>
+                                                {{ $obat->stok }} unit
+                                            </span>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="px-6 py-3 border-t border-base-200">
+                        <a href="{{ route('obat.index') }}"
+                            class="text-xs font-semibold text-amber-500 hover:text-amber-700 flex items-center gap-1 transition">
+                            Kelola stok obat
+                            <i class="fas fa-arrow-right text-xs"></i>
+                        </a>
+                    </div>
+                @endif
+
+            </div>
+        </div>
+
+    </div>
+    @endif
+
 </x-layouts.app>

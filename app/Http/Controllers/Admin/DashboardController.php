@@ -21,12 +21,20 @@ class DashboardController extends Controller
         // Ambil 5 poli terbaru beserta jumlah dokternya
         $polis = Poli::withCount('dokters')->latest()->take(5)->get();
 
+        // Obat dengan stok habis (stok = 0)
+        $obatHabis = Obat::where('stok', '<=', 0)->orderBy('nama_obat')->get();
+
+        // Obat dengan stok menipis (1–9)
+        $obatMenipis = Obat::whereBetween('stok', [1, 9])->orderBy('stok')->get();
+
         return view('admin.dashboard', compact(
             'totalPoli',
             'totalDokter',
             'totalPasien',
             'totalObat',
             'polis',
+            'obatHabis',
+            'obatMenipis',
         ));
     }
 }
