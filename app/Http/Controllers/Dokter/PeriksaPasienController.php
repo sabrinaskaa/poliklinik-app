@@ -43,7 +43,7 @@ class PeriksaPasienController extends Controller
 
         $obatIds = json_decode($request->obat_json, true);
 
-        // ── Validasi stok setiap obat yang dipilih ──────────────────────────
+        // Validasi stok setiap obat yang dipilih 
         $stokHabisErrors = [];
         foreach ($obatIds as $idObat) {
             $obat = Obat::find($idObat);
@@ -58,7 +58,6 @@ class PeriksaPasienController extends Controller
                 ->withInput()
                 ->with('error', "Stok obat berikut sudah habis: {$namaObat}. Silakan pilih obat lain atau hubungi admin.");
         }
-        // ────────────────────────────────────────────────────────────────────
 
         DB::transaction(function () use ($request, $obatIds) {
             $periksa = Periksa::create([
